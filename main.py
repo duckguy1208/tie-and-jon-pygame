@@ -16,7 +16,7 @@ while True:
     # Do logical updates here.
     # ...
 
-    screen.fill("purple")  # Fill the display with a solid color
+    screen.fill("yellow")  # Fill the display with a solid color
 
     # Render the graphics here.
     # ...
