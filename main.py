@@ -1,5 +1,6 @@
 import pygame
 
+
 pygame.init()
 
 screen = pygame.display.set_mode((1280,720))
@@ -17,6 +18,7 @@ while True:
     # ...
 
     screen.fill("yellow")  # Fill the display with a solid color
+    player_img = pygame.image.load('image.assets/duck.png').convert_alpha()
 
     # Render the graphics here.
     # ...
