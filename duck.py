@@ -1,5 +1,6 @@
 from object import Object
 
+
 class Duck(Object):
     vel = 100
     x = 0

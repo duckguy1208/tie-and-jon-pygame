@@ -1,6 +1,7 @@
 import pygame
 import random
 
+
 class Object:
     vel = 100
     x_min = 0
@@ -15,8 +16,7 @@ class Object:
         self.pos = self.random_position()
 
     def draw(self):
-        pygame.draw.circle(self.surface, self.color, self.pos, self.size)
-
+        player_img = pygame.image.load('assets/player.png').convert_alpha()
     def move(self, x, y, dt):
         self.pos.x += x * self.vel * dt
         self.pos.y += y * self.vel * dt
