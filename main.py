@@ -30,10 +30,6 @@ while True:
     if duck.quack_timer < 0:
         duck.quack_timer = 0
 
-<<<<<<< HEAD
-    screen.fill("yellow")  # Fill the display with a solid color
-    player_img = pygame.image.load('image.assets/duck.png').convert_alpha()
-=======
     # Handle continuous arrow-key movement
     keys = pygame.key.get_pressed()
     dx = 0
@@ -54,7 +50,6 @@ while True:
 
     duck.applyGravity(dt)
     screen.fill(DARK_GREEN)  # Fill the display with a solid color
->>>>>>> 7f37da2fd09b5cc5b1a1c381c56819f970afd5b8
 
     # Render the graphics here.
     duck.draw()
