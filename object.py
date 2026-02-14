@@ -45,7 +45,7 @@ class Object:
             # If quack image doesn't exist, use the regular image
             self.quack_img = self.player_img
 
-    def draw(self):
+    def draw(self, camera_y=0):
         # Use quack image if actively quacking, otherwise use regular image
         img = self.quack_img if (self.quack_timer > 0) else self.player_img
         
@@ -55,7 +55,7 @@ class Object:
 
         offset = pygame.Vector2(img.get_width() / 2, img.get_height() / 2)
         dest = self.pos - offset
-        self.surface.blit(img, (dest.x, dest.y))
+        self.surface.blit(img, (dest.x, dest.y - camera_y))
         
         # Draw quack text if active
         if self.quack_text and self.quack_timer > 0:
@@ -63,7 +63,7 @@ class Object:
             text_color = getattr(self, 'quack_color', (0, 0, 0))
             font = pygame.font.Font(None, text_size)
             text_surf = font.render(self.quack_text, True, text_color)
-            text_pos = (self.pos.x - text_surf.get_width() / 2, self.pos.y - self.sprite_size / 2 - 10)
+            text_pos = (self.pos.x - text_surf.get_width() / 2, self.pos.y - self.sprite_size / 2 - 10 - camera_y)
             self.surface.blit(text_surf, text_pos)
         
     def move(self, x, y, dt):
@@ -118,10 +118,6 @@ class Object:
         if self.pos.x > self.x_max - half_sprite:
             self.pos.x = self.x_max - half_sprite
         
-        if self.pos.y < self.y_min + half_sprite:
-            self.pos.y = self.y_min + half_sprite
-            self.vertical_vel = 0
-            
         if self.pos.y >= self.y_max - half_sprite:
             self.pos.y = self.y_max - half_sprite
             self.vertical_vel = 0
@@ -145,3 +141,14 @@ class Object:
     
 def objectFactory(x, y):
     return Object(pygame.Vector2(x, y))
+
+
+class Platform:
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = (139, 69, 19) # Brown color
+
+    def draw(self, surface, camera_y=0):
+        draw_rect = self.rect.copy()
+        draw_rect.y -= camera_y
+        pygame.draw.rect(surface, self.color, draw_rect)
