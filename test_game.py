@@ -7,6 +7,7 @@ import pytest
 import random
 from object import Platform, Object
 from duck import Duck
+from background import ParallaxBackground
 
 def is_reachable(p1, p2, jump_speed=-800, gravity=1500, horizontal_vel=400):
     """
@@ -161,3 +162,20 @@ def test_game_over_condition():
     duck_pos_y = -200 # -200 is "below" -1000 + 720 = -280
     game_over = duck_pos_y > camera_y + SCREEN_HEIGHT
     assert game_over
+
+def test_parallax_background():
+    pygame.init()
+    surface = pygame.Surface((1280, 720))
+    bg = ParallaxBackground(1280, 720)
+    
+    # Test initial draw
+    bg.draw(surface, 0)
+    
+    # Test scrolled draw
+    bg.draw(surface, -1000)
+    
+    # Basic check that layers are loaded
+    assert len(bg.layers) > 0
+    for layer in bg.layers:
+        assert isinstance(layer['image'], pygame.Surface)
+        assert 0 <= layer['speed'] <= 1.0
