@@ -2,7 +2,8 @@
 
 ## Defects
 
-- [ ] Platforms always need to be within reach of the duck's max jump height. No impossible platforms.
+- [x] [HIGH_PRIORITY] We are in C:\Users\jonat\~projects\tie-and-jon-pygame yet there is a tie-and-jon-pygame directory in C:\Users\jonat\~projects\tie-and-jon-pygame. Investigate the cause of the duplication... could it be the wording in the gemini-task.ps1 script or prompt.md? Is it safe to remove the duplicate nested directory?
+- [x] Platforms always need to be within reach of the duck's max jump height. No impossible platforms.
 
 ## Features
 
