@@ -44,6 +44,14 @@ def test_duck_assets():
     assert os.path.exists(duck_path), "duck.png missing"
     assert os.path.exists(quack_path), "duck_quack.png missing"
 
+def test_stitched_background():
+    pygame.init()
+    path = os.path.join("assets", "images", "stitched_background.png")
+    assert os.path.exists(path), "Stitched background missing"
+    img = pygame.image.load(path)
+    assert img.get_width() == 1280
+    assert img.get_height() == 16 * 720
+
 def test_win_condition_logic():
     SCREEN_HEIGHT = 720
     num_backgrounds = 16

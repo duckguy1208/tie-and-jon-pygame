@@ -38,31 +38,10 @@ def generate_platform(prev_platform):
     return Platform(x_pos, y_pos, width, 40)
 
 def main():
-    # Load background images
-    background_files = [
-        "game_background.png",
-        "background_sky1.png",
-        "background_sky2.png",
-        "background_sky3.png",
-        "background_sky4.png",
-        "background_sky5.png",
-        "background_space1.png",
-        "background_space2.png",
-        "background_space3.png",
-        "background_space4.png",
-        "background_blue.png",
-        "background_green.png",
-        "background_orange.png",
-        "background_purple.png",
-        "background_red.png",
-        "background_yellow.png"
-    ]
-    
-    background_images = []
-    for f in background_files:
-        img = pygame.image.load(f"assets/images/{f}")
-        img = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        background_images.append(img)
+    # Load stitched background image
+    stitched_bg = pygame.image.load("assets/images/stitched_background.png").convert()
+    stitched_bg_height = stitched_bg.get_height()
+    num_backgrounds = stitched_bg_height // SCREEN_HEIGHT
 
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
@@ -134,7 +113,7 @@ def main():
 
             # Check for win condition: passed all backgrounds
             level_index = int(max(0, -camera_y) // SCREEN_HEIGHT)
-            if level_index >= len(background_images):
+            if level_index >= num_backgrounds:
                 won = True
 
             # Procedural platform generation
@@ -151,14 +130,12 @@ def main():
                 game_over = True
 
         # Rendering
-        # Determine current background
-        level_index = int(max(0, -camera_y) // SCREEN_HEIGHT)
-        if level_index < len(background_images):
-            current_bg = background_images[level_index]
-        else:
-            current_bg = background_images[-1] # Fallback to last background
+        # Calculate background offset: bottom of stitched image is camera_y = 0
+        bg_y_offset = -(stitched_bg_height - SCREEN_HEIGHT + camera_y)
+        # Clamp to ensure we don't show black at the top if we go past the win line
+        bg_y_offset = min(0, max(-(stitched_bg_height - SCREEN_HEIGHT), bg_y_offset))
             
-        screen.blit(current_bg, (0, 0))  # Draw the background image
+        screen.blit(stitched_bg, (0, bg_y_offset))  # Draw the background image
 
         # Render platforms
         for p in platforms:
