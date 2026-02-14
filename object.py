@@ -118,12 +118,7 @@ class Object:
         if self.pos.x > self.x_max - half_sprite:
             self.pos.x = self.x_max - half_sprite
         
-        if self.pos.y >= self.y_max - half_sprite:
-            self.pos.y = self.y_max - half_sprite
-            self.vertical_vel = 0
-            self.on_ground = True
-        else:
-            self.on_ground = False
+        self.on_ground = False
 
         # Platform collisions
         player_rect = self.get_rect()
