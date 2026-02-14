@@ -79,3 +79,18 @@ def test_score_increment():
     
     assert score == 6 # Score should not change
     assert max_height == 300
+
+def test_game_over_condition():
+    # Simulate game over condition logic
+    SCREEN_HEIGHT = 720
+    camera_y = -1000 # Camera has moved up significantly
+    
+    # Duck is above the bottom of the view
+    duck_pos_y = -500
+    game_over = duck_pos_y > camera_y + SCREEN_HEIGHT
+    assert not game_over
+    
+    # Duck falls below the bottom of the view
+    duck_pos_y = -200 # -200 is "below" -1000 + 720 = -280
+    game_over = duck_pos_y > camera_y + SCREEN_HEIGHT
+    assert game_over

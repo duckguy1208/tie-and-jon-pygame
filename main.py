@@ -11,100 +11,122 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 clock = pygame.time.Clock()
 
-duck = Duck(screen)
-# Start the player vertically centered
-duck.pos.y = SCREEN_HEIGHT / 2
-
-# Camera position
-camera_y = 0
-
-# Define some platforms
-platforms = [
-    Platform(100, 600, 400, 40),
-    Platform(600, 450, 400, 40),
-    Platform(200, 300, 300, 40)
-]
-
 def generate_platform(y_pos):
     width = random.randint(200, 400)
     x_pos = random.randint(0, SCREEN_WIDTH - width)
     return Platform(x_pos, y_pos, width, 40)
 
-# Track the highest platform to know when to generate more
-highest_platform_y = 300
+def main():
+    # Load background image once
+    background_image = pygame.image.load("image.assets/game_background.png")
+    background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Score tracking
-score = 0
-max_height = SCREEN_HEIGHT / 2 # Initial duck height
-
-# Load background image
-background_image = pygame.image.load("image.assets/game_background.png")
-background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-
-while True:
-    # Process player inputs.
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            raise SystemExit
-
-    # Do logical updates here.
-    dt = clock.tick(60)
-    
-    # Decrement quack timer
-    duck.quack_timer -= dt
-    if duck.quack_timer < 0:
-        duck.quack_timer = 0
-
-    # Handle continuous arrow-key movement
-    keys = pygame.key.get_pressed()
-    dx = 0
-    if keys[pygame.K_LEFT]:
-        dx = -1
-    if keys[pygame.K_RIGHT]:
-        dx = 1
-    
-    if dx != 0:
-        duck.move(dx, 0, dt)
-    
-    if keys[pygame.K_UP]:
-        duck.jump()
-
-    # quack button
-    if keys[pygame.K_SPACE]:
-        duck.quack()
-
-    duck.applyGravity(dt, platforms)
-
-    # Update score based on height reached
-    if duck.pos.y < max_height:
-        score += int((max_height - duck.pos.y) / 10)
-        max_height = duck.pos.y
-
-    # Camera follow logic: if duck is in the upper half of the screen, scroll up
-    if duck.pos.y < camera_y + SCREEN_HEIGHT / 2:
-        camera_y = duck.pos.y - SCREEN_HEIGHT / 2
-
-    # Procedural platform generation
-    while highest_platform_y > camera_y - SCREEN_HEIGHT:
-        highest_platform_y -= random.randint(150, 250)
-        platforms.append(generate_platform(highest_platform_y))
-
-    # Clean up old platforms
-    platforms = [p for p in platforms if p.rect.y < camera_y + SCREEN_HEIGHT + 100]
-
-    screen.blit(background_image, (0, 0))  # Draw the background image
-
-    # Render platforms
-    for p in platforms:
-        p.draw(screen, camera_y)
-
-    # Render the graphics here.
-    duck.draw(camera_y)
-
-    # Draw score
     font = pygame.font.Font(None, 74)
-    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-    screen.blit(score_text, (10, 10))
+    small_font = pygame.font.Font(None, 36)
 
-    pygame.display.flip()  # Refresh on-screen display
+    def reset_game():
+        d = Duck(screen)
+        d.pos.y = SCREEN_HEIGHT / 2
+        cy = 0
+        p = [
+            Platform(100, 600, 400, 40),
+            Platform(600, 450, 400, 40),
+            Platform(200, 300, 300, 40)
+        ]
+        hpy = 300
+        s = 0
+        mh = SCREEN_HEIGHT / 2
+        go = False
+        return d, cy, p, hpy, s, mh, go
+
+    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over = reset_game()
+
+    while True:
+        # Process player inputs.
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                raise SystemExit
+            if game_over and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over = reset_game()
+
+        dt = clock.tick(60)
+
+        if not game_over:
+            # Decrement quack timer
+            duck.quack_timer -= dt
+            if duck.quack_timer < 0:
+                duck.quack_timer = 0
+
+            # Handle continuous arrow-key movement
+            keys = pygame.key.get_pressed()
+            dx = 0
+            if keys[pygame.K_LEFT]:
+                dx = -1
+            if keys[pygame.K_RIGHT]:
+                dx = 1
+            
+            if dx != 0:
+                duck.move(dx, 0, dt)
+            
+            if keys[pygame.K_UP]:
+                duck.jump()
+
+            # quack button
+            if keys[pygame.K_SPACE]:
+                duck.quack()
+
+            duck.applyGravity(dt, platforms)
+
+            # Update score based on height reached
+            if duck.pos.y < max_height:
+                score += int((max_height - duck.pos.y) / 10)
+                max_height = duck.pos.y
+
+            # Camera follow logic: if duck is in the upper half of the screen, scroll up
+            if duck.pos.y < camera_y + SCREEN_HEIGHT / 2:
+                camera_y = duck.pos.y - SCREEN_HEIGHT / 2
+
+            # Procedural platform generation
+            while highest_platform_y > camera_y - SCREEN_HEIGHT:
+                highest_platform_y -= random.randint(150, 250)
+                platforms.append(generate_platform(highest_platform_y))
+
+            # Clean up old platforms
+            platforms = [p for p in platforms if p.rect.y < camera_y + SCREEN_HEIGHT + 100]
+
+            # Check for game over
+            if duck.pos.y > camera_y + SCREEN_HEIGHT:
+                game_over = True
+
+        # Rendering
+        screen.blit(background_image, (0, 0))  # Draw the background image
+
+        # Render platforms
+        for p in platforms:
+            p.draw(screen, camera_y)
+
+        # Render the graphics here.
+        duck.draw(camera_y)
+
+        # Draw score
+        score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+        screen.blit(score_text, (10, 10))
+
+        if game_over:
+            # Dim the screen
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 150))
+            screen.blit(overlay, (0, 0))
+
+            game_over_text = font.render("GAME OVER", True, (255, 255, 255))
+            restart_text = small_font.render("Press R to Restart", True, (255, 255, 255))
+            
+            screen.blit(game_over_text, (SCREEN_WIDTH // 2 - game_over_text.get_width() // 2, SCREEN_HEIGHT // 2 - 50))
+            screen.blit(restart_text, (SCREEN_WIDTH // 2 - restart_text.get_width() // 2, SCREEN_HEIGHT // 2 + 50))
+
+        pygame.display.flip()  # Refresh on-screen display
+
+if __name__ == "__main__":
+    main()
