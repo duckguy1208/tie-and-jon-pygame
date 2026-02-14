@@ -4,6 +4,8 @@ from duck import Duck
 
 pygame.init()
 
+DARK_GREEN = (0, 100, 0)
+
 screen = pygame.display.set_mode((1280,720))
 
 clock = pygame.time.Clock()
@@ -12,7 +14,8 @@ duck = Duck(screen)
 # Start the player vertically centered (keep x from object's random position)
 duck.pos.y = screen.get_height() / 2
 
-DARK_GREEN = (0, 100, 0)
+# Load background image
+background = screen.fill(DARK_GREEN)
 
 while True:
     # Process player inputs.
@@ -48,7 +51,7 @@ while True:
         duck.quack()
 
     duck.applyGravity(dt)
-    screen.fill(DARK_GREEN)  # Fill the display with a solid color
+    screen.blit(background, (0, 0))  # Draw the background image
 
     # Render the graphics here.
     duck.draw()
