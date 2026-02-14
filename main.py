@@ -2,6 +2,7 @@ import pygame
 import random
 from duck import Duck
 from object import Platform
+from background import ParallaxBackground
 
 pygame.init()
 
@@ -38,9 +39,8 @@ def generate_platform(prev_platform):
     return Platform(x_pos, y_pos, width, 40)
 
 def main():
-    # Load background image once
-    background_image = pygame.image.load("assets/images/background_1.png")
-    background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    # Initialize parallax background
+    background = ParallaxBackground(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
@@ -123,7 +123,7 @@ def main():
                 game_over = True
 
         # Rendering
-        screen.blit(background_image, (0, 0))  # Draw the background image
+        background.draw(screen, camera_y)  # Draw the parallax background
 
         # Render platforms
         for p in platforms:
