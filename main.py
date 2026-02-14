@@ -38,9 +38,31 @@ def generate_platform(prev_platform):
     return Platform(x_pos, y_pos, width, 40)
 
 def main():
-    # Load background image once
-    background_image = pygame.image.load("assets/images/background_1.png")
-    background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    # Load background images
+    background_files = [
+        "game_background.png",
+        "background_sky1.png",
+        "background_sky2.png",
+        "background_sky3.png",
+        "background_sky4.png",
+        "background_sky5.png",
+        "background_space1.png",
+        "background_space2.png",
+        "background_space3.png",
+        "background_space4.png",
+        "background_blue.png",
+        "background_green.png",
+        "background_orange.png",
+        "background_purple.png",
+        "background_red.png",
+        "background_yellow.png"
+    ]
+    
+    background_images = []
+    for f in background_files:
+        img = pygame.image.load(f"assets/images/{f}")
+        img = pygame.transform.scale(img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        background_images.append(img)
 
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
@@ -58,9 +80,10 @@ def main():
         s = 0
         mh = SCREEN_HEIGHT / 2
         go = False
-        return d, cy, p, hpy, s, mh, go
+        w = False
+        return d, cy, p, hpy, s, mh, go, w
 
-    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over = reset_game()
+    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over, won = reset_game()
 
     while True:
         # Process player inputs.
@@ -68,13 +91,13 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 raise SystemExit
-            if game_over and event.type == pygame.KEYDOWN:
+            if (game_over or won) and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
-                    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over = reset_game()
+                    duck, camera_y, platforms, highest_platform_y, score, max_height, game_over, won = reset_game()
 
         dt = clock.tick(60)
 
-        if not game_over:
+        if not game_over and not won:
             # Decrement quack timer
             duck.quack_timer -= dt
             if duck.quack_timer < 0:
@@ -109,6 +132,11 @@ def main():
             if duck.pos.y < camera_y + SCREEN_HEIGHT / 2:
                 camera_y = duck.pos.y - SCREEN_HEIGHT / 2
 
+            # Check for win condition: passed all backgrounds
+            level_index = int(max(0, -camera_y) // SCREEN_HEIGHT)
+            if level_index >= len(background_images):
+                won = True
+
             # Procedural platform generation
             while highest_platform_y > camera_y - SCREEN_HEIGHT:
                 new_platform = generate_platform(platforms[-1])
@@ -123,7 +151,14 @@ def main():
                 game_over = True
 
         # Rendering
-        screen.blit(background_image, (0, 0))  # Draw the background image
+        # Determine current background
+        level_index = int(max(0, -camera_y) // SCREEN_HEIGHT)
+        if level_index < len(background_images):
+            current_bg = background_images[level_index]
+        else:
+            current_bg = background_images[-1] # Fallback to last background
+            
+        screen.blit(current_bg, (0, 0))  # Draw the background image
 
         # Render platforms
         for p in platforms:
@@ -136,16 +171,20 @@ def main():
         score_text = font.render(f"Score: {score}", True, (0, 0, 0))
         screen.blit(score_text, (10, 10))
 
-        if game_over:
+        if game_over or won:
             # Dim the screen
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
             overlay.fill((0, 0, 0, 150))
             screen.blit(overlay, (0, 0))
 
-            game_over_text = font.render("GAME OVER", True, (255, 255, 255))
+            if won:
+                title_text = font.render("YOU WIN!", True, (255, 255, 0))
+            else:
+                title_text = font.render("GAME OVER", True, (255, 255, 255))
+                
             restart_text = small_font.render("Press R to Restart", True, (255, 255, 255))
             
-            screen.blit(game_over_text, (SCREEN_WIDTH // 2 - game_over_text.get_width() // 2, SCREEN_HEIGHT // 2 - 50))
+            screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, SCREEN_HEIGHT // 2 - 50))
             screen.blit(restart_text, (SCREEN_WIDTH // 2 - restart_text.get_width() // 2, SCREEN_HEIGHT // 2 + 50))
 
         pygame.display.flip()  # Refresh on-screen display
