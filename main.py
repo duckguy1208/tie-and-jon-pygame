@@ -2,6 +2,7 @@ import pygame
 import random
 from duck import Duck
 from object import Platform
+from utils import clamp_platform_distance
 
 pygame.init()
 
@@ -11,6 +12,8 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 clock = pygame.time.Clock()
 
+
+
 def generate_platform(prev_platform):
     # Max vertical gap should be less than the duck's max jump height (~213 pixels)
     max_dy = 180 
@@ -18,12 +21,13 @@ def generate_platform(prev_platform):
     dy = random.randint(min_dy, max_dy)
     y_pos = prev_platform.rect.y - dy
     
-    width = random.randint(200, 400)
-    
+    width = random.randint(100, 250) 
     # Based on dy=180, duck can travel ~290 pixels horizontally during the jump.
     # We'll use a slightly more conservative max_dx to ensure it's comfortably reachable.
-    max_dx = 250 
-    
+    max_dx_init = 250 + int(prev_platform.rect.y / 100)  
+    max_dx = clamp_platform_distance(max_dx_init)
+    print(max_dx)
+
     # The new platform should be placed such that it's reachable from the previous one.
     # The closest point of the new platform must be within max_dx of the previous platform.
     min_x = max(0, prev_platform.rect.x - max_dx)
@@ -145,7 +149,7 @@ def main():
         duck.draw(camera_y)
 
         # Draw score
-        score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_text, (10, 10))
 
         if game_over or won:
