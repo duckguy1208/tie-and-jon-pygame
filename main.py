@@ -18,7 +18,7 @@ def generate_platform(y_pos):
 
 def main():
     # Load background image once
-    background_image = pygame.image.load("image.assets/game_background.png")
+    background_image = pygame.image.load("assets/images/background_1.png")
     background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     font = pygame.font.Font(None, 74)
