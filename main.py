@@ -3,8 +3,6 @@ import random
 from duck import Duck
 from object import Platform
 
-
-
 pygame.init()
 
 SCREEN_WIDTH = 1280
@@ -14,7 +12,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
 duck = Duck(screen)
-# Start the player vertically centered (keep x from object's random position)
+# Start the player vertically centered
 duck.pos.y = SCREEN_HEIGHT / 2
 
 # Camera position
@@ -40,12 +38,47 @@ score = 0
 max_height = SCREEN_HEIGHT / 2 # Initial duck height
 
 # Load background image
-# ... (rest of the code)
+background_image = pygame.image.load("image.assets/game_background.png")
+background_image = pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+while True:
+    # Process player inputs.
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            raise SystemExit
+
+    # Do logical updates here.
+    dt = clock.tick(60)
+    
+    # Decrement quack timer
+    duck.quack_timer -= dt
+    if duck.quack_timer < 0:
+        duck.quack_timer = 0
+
+    # Handle continuous arrow-key movement
+    keys = pygame.key.get_pressed()
+    dx = 0
+    if keys[pygame.K_LEFT]:
+        dx = -1
+    if keys[pygame.K_RIGHT]:
+        dx = 1
+    
+    if dx != 0:
+        duck.move(dx, 0, dt)
+    
+    if keys[pygame.K_UP]:
+        duck.jump()
+
+    # quack button
+    if keys[pygame.K_SPACE]:
+        duck.quack()
+
     duck.applyGravity(dt, platforms)
 
     # Update score based on height reached
     if duck.pos.y < max_height:
-        score += int((max_height - duck.pos.y) / 10) # 1 point per 10 pixels
+        score += int((max_height - duck.pos.y) / 10)
         max_height = duck.pos.y
 
     # Camera follow logic: if duck is in the upper half of the screen, scroll up
@@ -75,5 +108,3 @@ max_height = SCREEN_HEIGHT / 2 # Initial duck height
     screen.blit(score_text, (10, 10))
 
     pygame.display.flip()  # Refresh on-screen display
-
-    
