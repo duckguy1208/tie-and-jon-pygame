@@ -37,29 +37,6 @@ def generate_platform(prev_platform):
         
     return Platform(x_pos, y_pos, width, 40)
 
-<<<<<<< HEAD
-    screen.fill(DARK_GREEN)  # Fill the display with a solid color
-
-    # Handle continuous arrow-key movement
-    keys = pygame.key.get_pressed()
-    dx = 0
-    dy = 0
-    if keys[pygame.K_LEFT]:
-        dx = -1
-    if keys[pygame.K_RIGHT]:
-        dx = 1
-    if keys[pygame.K_UP]:
-        dy = -1
-    if keys[pygame.K_DOWN]:
-        dy = 1
-    if dx != 0 or dy != 0:
-        duck.move(dx, dy, dt)
-    #quack button
-    if keys[pygame.K_SPACE]:
-        duck.quack()
-
-    duck.applyGravity(dt)
-=======
 def main():
     # Load background image once
     background_image = pygame.image.load("assets/images/background_1.png")
@@ -67,7 +44,6 @@ def main():
 
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
->>>>>>> 080f29dd29be6e1cfec02a031801684f7386eba4
 
     def reset_game():
         d = Duck(screen)
