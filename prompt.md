@@ -24,6 +24,7 @@ Use gh cli to open a pr for your branch to get merged into main, include a descr
 
 # Things to remember
 
-Follow best practices.
-Write valuable tests and test your code.
-Your tests should test behavior and not implementation.
+- Follow best practices.
+- Write valuable tests and test your code.
+- Your tests should test behavior and not implementation.
+- Always ensure that the code runs with `py main.py` without errors. Run `py main.py` with a timeout to ensure control goes back to you in the event that no errors occur.
