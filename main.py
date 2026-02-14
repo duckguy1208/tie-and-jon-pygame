@@ -167,4 +167,7 @@ def main():
         pygame.display.flip()  # Refresh on-screen display
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (KeyboardInterrupt, SystemExit):
+        pass
