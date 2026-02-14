@@ -8,8 +8,14 @@
 
 - [x] procedural generate platforms upward.
 - [x] increment score as duck goes upward.
-- [ ] parallax background scrolling.
 - [x] game over screen when falling off the bottom.
+- [x] [HIGH PRIORITY] Use assets within assets/images for game
+  - duck should use duck.png and duck_quack.png when quacking.
+    1st level AKA screen height should use game_background.png, then progress as follows
+    sky1 - sky5
+    space1 - space4
+    then progress through each colored background in any order.
+    If the player gets through all the levels, they win. Implement a win screen like the game over screen.
 
 ## Tech Debt
 

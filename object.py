@@ -24,9 +24,8 @@ class Object:
         # For quack text display
         self.quack_text = None
         self.quack_timer = 0
-        # Load player image once (duck.png) from package assets
-        assets_dir = os.path.join(os.path.dirname(__file__), 'image.assets')
-        img_path = os.path.join(assets_dir, 'duck.png')
+        # Load player image once (duck.png) from assets/sprites
+        img_path = os.path.join('assets', 'sprites', 'duck.png')
         try:
             self.player_img = pygame.image.load(img_path).convert_alpha()
             # Scale the image down to the configured sprite size
@@ -36,8 +35,8 @@ class Object:
             self.player_img = pygame.Surface((self.sprite_size, self.sprite_size), pygame.SRCALPHA)
             pygame.draw.circle(self.player_img, pygame.Color(self.color), (self.sprite_size//2, self.sprite_size//2), self.sprite_size//2)
         
-        # Load quack image (duck_quack.png) if it exists
-        quack_img_path = os.path.join(assets_dir, 'duck_quack.png')
+        # Load quack image (duck_quack.png) from assets/sprites
+        quack_img_path = os.path.join('assets', 'sprites', 'duck_quack.png')
         try:
             self.quack_img = pygame.image.load(quack_img_path).convert_alpha()
             self.quack_img = pygame.transform.smoothscale(self.quack_img, (self.sprite_size, self.sprite_size))
