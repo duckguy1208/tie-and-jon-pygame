@@ -140,7 +140,7 @@ def objectFactory(x, y):
 class Platform:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
-        self.color = (100, 100, 100) # grey color
+        self.color = (255, 255, 255) # White color
 
     def draw(self, surface, camera_y=0):
         draw_rect = self.rect.copy()
