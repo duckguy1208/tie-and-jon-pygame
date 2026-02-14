@@ -2,6 +2,7 @@ import pygame
 from duck import Duck
 
 
+
 pygame.init()
 
 DARK_GREEN = (0, 100, 0)
