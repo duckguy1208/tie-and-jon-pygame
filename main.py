@@ -18,7 +18,7 @@ def generate_platform(prev_platform):
     dy = random.randint(min_dy, max_dy)
     y_pos = prev_platform.rect.y - dy
     
-    width = random.randint(200, 400)
+    width = random.randint(100, 250)
     
     # Based on dy=180, duck can travel ~290 pixels horizontally during the jump.
     # We'll use a slightly more conservative max_dx to ensure it's comfortably reachable.
