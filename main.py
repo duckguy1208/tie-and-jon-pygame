@@ -11,9 +11,30 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 clock = pygame.time.Clock()
 
-def generate_platform(y_pos):
+def generate_platform(prev_platform):
+    # Max vertical gap should be less than the duck's max jump height (~213 pixels)
+    max_dy = 180 
+    min_dy = 120
+    dy = random.randint(min_dy, max_dy)
+    y_pos = prev_platform.rect.y - dy
+    
     width = random.randint(200, 400)
-    x_pos = random.randint(0, SCREEN_WIDTH - width)
+    
+    # Based on dy=180, duck can travel ~290 pixels horizontally during the jump.
+    # We'll use a slightly more conservative max_dx to ensure it's comfortably reachable.
+    max_dx = 250 
+    
+    # The new platform should be placed such that it's reachable from the previous one.
+    # The closest point of the new platform must be within max_dx of the previous platform.
+    min_x = max(0, prev_platform.rect.x - max_dx)
+    max_x = min(SCREEN_WIDTH - width, prev_platform.rect.right + max_dx - width)
+    
+    if min_x <= max_x:
+        x_pos = random.randint(int(min_x), int(max_x))
+    else:
+        # Fallback in case of weird constraints, though with SCREEN_WIDTH=1280 it shouldn't happen
+        x_pos = random.randint(0, SCREEN_WIDTH - width)
+        
     return Platform(x_pos, y_pos, width, 40)
 
 def main():
@@ -90,8 +111,9 @@ def main():
 
             # Procedural platform generation
             while highest_platform_y > camera_y - SCREEN_HEIGHT:
-                highest_platform_y -= random.randint(150, 250)
-                platforms.append(generate_platform(highest_platform_y))
+                new_platform = generate_platform(platforms[-1])
+                platforms.append(new_platform)
+                highest_platform_y = new_platform.rect.y
 
             # Clean up old platforms
             platforms = [p for p in platforms if p.rect.y < camera_y + SCREEN_HEIGHT + 100]
