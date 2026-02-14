@@ -4,8 +4,75 @@ os.environ['SDL_VIDEODRIVER'] = 'dummy'
 
 import pygame
 import pytest
+import random
 from object import Platform, Object
 from duck import Duck
+
+def is_reachable(p1, p2, jump_speed=-800, gravity=1500, horizontal_vel=400):
+    """
+    Check if p2 is reachable from p1.
+    p1, p2 are Platform objects.
+    """
+    dy = p1.rect.top - p2.rect.top
+    if dy <= 0:
+        return True # It's below or at the same level
+    
+    # Max height check
+    max_h = (jump_speed**2) / (2 * gravity)
+    if dy > max_h:
+        return False
+    
+    # Horizontal distance check
+    # Solve 0.5 * gravity * t^2 + jump_speed * t + dy = 0
+    a = 0.5 * gravity
+    b = jump_speed
+    c = dy
+    discriminant = b**2 - 4*a*c
+    if discriminant < 0:
+        return False 
+    
+    t2 = (-b + (discriminant**0.5)) / (2*a)
+    
+    # t2 is the later time (when falling back down through the height)
+    max_t = t2
+    max_dx = horizontal_vel * max_t
+    
+    # Closest horizontal distance between platforms
+    if p2.rect.right < p1.rect.left:
+        dist_x = p1.rect.left - p2.rect.right
+    elif p2.rect.left > p1.rect.right:
+        dist_x = p2.rect.left - p1.rect.right
+    else:
+        dist_x = 0
+        
+    return dist_x <= max_dx
+
+def test_platform_reachability_logic():
+    random.seed(42)
+    SCREEN_WIDTH = 1280
+    
+    # This matches the implementation in main.py
+    def generate_platform_new(prev_platform):
+        max_dy = 180 
+        min_dy = 120
+        dy = random.randint(min_dy, max_dy)
+        y_pos = prev_platform.rect.y - dy
+        width = random.randint(200, 400)
+        max_dx = 250 
+        min_x = max(0, prev_platform.rect.x - max_dx)
+        max_x = min(SCREEN_WIDTH - width, prev_platform.rect.right + max_dx - width)
+        if min_x <= max_x:
+            x_pos = random.randint(int(min_x), int(max_x))
+        else:
+            x_pos = random.randint(0, SCREEN_WIDTH - width)
+        return Platform(x_pos, y_pos, width, 40)
+
+    platforms = [Platform(100, 600, 400, 40)]
+    
+    for _ in range(100):
+        new_p = generate_platform_new(platforms[-1])
+        assert is_reachable(platforms[-1], new_p), f"Platform at {new_p.rect} not reachable from {platforms[-1].rect}"
+        platforms.append(new_p)
 
 def test_platform_creation():
     p = Platform(100, 200, 50, 10)

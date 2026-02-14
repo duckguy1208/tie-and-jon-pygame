@@ -15,3 +15,7 @@
 
 - [ ] implement proper linting that enforces python standards. Include the linting as part of a pre commit hook
 - [ ] implement automatic code formatting with prettier (or other if there is something more python focused). Add .vscode/settings.json to ensure all devs automtically have formatting on save/paste.
+
+## Deployment
+
+- [ ] Use Pygbag to prepare the game to be deployed as a PWA on heroku or vercel... some free hosting.
