@@ -16,12 +16,12 @@ clock = pygame.time.Clock()
 
 def generate_platform(prev_platform):
     # Max vertical gap should be less than the duck's max jump height (~213 pixels)
-    max_dy = 180 
+    max_dy = 200 
     min_dy = 120
     dy = random.randint(min_dy, max_dy)
     y_pos = prev_platform.rect.y - dy
     
-    width = random.randint(200, 400)
+    width = random.randint(50, 250)
     
     # Based on dy=180, duck can travel ~290 pixels horizontally during the jump.
     # We'll use a slightly more conservative max_dx to ensure it's comfortably reachable.
