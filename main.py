@@ -51,6 +51,10 @@ def main():
     font = pygame.font.Font(None, 74)
     small_font = pygame.font.Font(None, 36)
 
+    # Load sound effects
+    quack_sound = pygame.mixer.Sound("assets/sounds/quack_sound.mp3") 
+    wing_flap = pygame.mixer.Sound("assets/sounds/wing_flap.mp3")
+
     def reset_game():
         d = Duck(screen)
         d.pos.y = SCREEN_HEIGHT / 2
@@ -70,6 +74,8 @@ def main():
     duck, camera_y, platforms, highest_platform_y, score, max_height, game_over, won = reset_game()
 
     while True:
+        # remember previous vertical velocity to detect upward transitions
+        prev_vertical_vel = duck.vertical_vel
         # Process player inputs.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -78,6 +84,14 @@ def main():
             if (game_over or won) and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     duck, camera_y, platforms, highest_platform_y, score, max_height, game_over, won = reset_game()
+            # Handle single-press actions (jump, quack) so they don't repeat while held
+            if not (game_over or won) and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    duck.jump()
+                if event.key == pygame.K_SPACE:
+                    duck.quack()
+                    quack_sound.set_volume(0.5)
+                    quack_sound.play()
 
         dt = clock.tick(60)
 
@@ -98,12 +112,12 @@ def main():
             if dx != 0:
                 duck.move(dx, 0, dt)
             
-            if keys[pygame.K_UP]:
-                duck.jump()
+            # Note: jump and quack are handled on KEYDOWN events above to avoid repeating while held
+                
 
-            # quack button
-            if keys[pygame.K_SPACE]:
-                duck.quack()
+            # Play wing flap only when duck starts moving upward (transition from non-up to up)
+            if prev_vertical_vel >= 0 and duck.vertical_vel < 0:
+                wing_flap.play()
 
             duck.applyGravity(dt, platforms)
 

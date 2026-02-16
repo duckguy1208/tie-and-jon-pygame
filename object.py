@@ -81,7 +81,7 @@ class Object:
         if self.on_ground:
             self.vertical_vel = self.jump_speed
             self.on_ground = False
-
+            
     def applyGravity(self, dt, platforms=[]):
         seconds = dt / 1000.0
         self.vertical_vel += self.gravity * seconds
